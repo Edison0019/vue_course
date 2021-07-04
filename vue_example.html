@@ -1,0 +1,91 @@
+<!-- this file is for reference purposes -->
+
+<style>
+.red {
+border: 2px red solid;
+}
+
+.green {
+border: 2px green solid;
+}
+</style>
+<div id="root">
+  <h1>
+    {{greeting}}
+  </h1>
+  <input v-model="greeting" v-bind:disabled="info.length < 15" :class="[greeting.length < 2 ? 'red' : 'green']">
+  <div v-if="count === 1">
+    <br>
+    Well done!
+  </div>
+  <ol>
+    <li v-for="fruit in fruits">
+    {{fruit.name | capitalize}}
+  </li>
+  </ol>
+  <br>
+  <input v-model="newFruit" v-on:keyup.enter="addNewFruit"><button v-on:click="addNewFruit">Add Fruit</button>
+  <fruit-list :fruits="fruits" />
+</div>
+
+<script>
+  Vue.component("fruit-list",{
+    props:['fruits'],
+    template:'<ol><li v-for="fruit in fruits">{{fruit.name}}</li></ol>'
+  });
+
+  Vue.component('counter-button',{
+	data: function(){
+  	return {counter:0};
+  },
+	methods:{
+    increment:function(){this.counter++}
+  },
+  template: '<button v-on:click="increment">value {{counter}}</button>'
+  });
+
+  const app = new Vue({
+      el: "#root",
+      component: ['fruit-list'],
+      data: {
+          greeting: "hello world",
+          count: 1,
+          info: "Edison Javier Santana Fernandez",
+          fruits:[
+            {name: 'apple'},
+            {name: 'orange'},
+            {name: 'watermelon'}
+          ],
+          newFruit: ""
+      },
+      methods:{
+          addNewFruit: function(){
+              this.fruits.push({name: this.newFruit});
+              return this.newFruit = "";
+          }
+      },
+      filters:{
+        capitalize: function(value){
+          return value.toUpperCase();
+        }
+      },
+      //vue lifecycle methods
+      created: function(){
+        console.log('created');
+      },
+      mounted: function(){
+        console.log('mounted')
+      },
+      updated: function(){
+        console.log('updated');
+      },
+      destroyed: function(){
+        console.log('destroyed');
+      }
+      })
+  //this is simply an interval to show how the destroy method works to remove Vue instances from the dom
+  setInterval(()=>{
+    app.$destroy();
+  },5000);
+    
+</script>
